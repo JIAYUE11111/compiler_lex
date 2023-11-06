@@ -555,14 +555,27 @@ void MinDFA()
 		}
 
 	}
+}
+int UpdateStatus(int status)
+{
 	for (int i = 0; i < DFAState.size(); i++)
 	{
-		vector<int>State = DFAState[i];
-		for (int j = 0; j < State.size(); j++)
+		for (int j = 0; j < DFAState[i].size(); j++)
 		{
-			cout << State[j] << " ";
+			if (DFAState[i][j] == status)
+			{
+				return i;//找到更新之后的下标表示新状态
+			}
 		}
-		cout << endl;
+	}
+	return -1;//正确的情况下应该不会到这里状态必然存在
+}
+void UpdateTransfromTableDFA()
+{
+	for (int i = 0; i < TransformTableDFA.size(); i++)
+	{
+		TransformTableDFA[i].LastStatus = UpdateStatus(TransformTableDFA[i].LastStatus);
+		TransformTableDFA[i].NextStatus = UpdateStatus(TransformTableDFA[i].NextStatus);
 	}
 }
 int main()
@@ -671,5 +684,21 @@ int main()
 		cout << row.LastStatus << "\t" << row.InputCharacter << "\t" << row.NextStatus << endl;
 	}
 	MinDFA();
+	cout << "MIN StatusSet:" << endl;
+	for (int i = 0; i < DFAState.size(); i++)
+	{
+		vector<int>State = DFAState[i];
+		for (int j = 0; j < State.size(); j++)
+		{
+			cout << State[j] << " ";
+		}
+		cout << endl;
+	}
+	UpdateTransfromTableDFA();
+	//打印状态集的转化关系
+	cout << "FINAL TRANSFREOM TABLE:" << endl;
+	for (const TransformStateDFA& row : TransformTableDFA) {
+		cout << row.LastStatus << "\t" << row.InputCharacter << "\t" << row.NextStatus << endl;
+	}
 	return 0;
 }
